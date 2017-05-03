@@ -12,7 +12,12 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     
-    let itemDic = ["GuardViewController" : "为什么 guard 比 if 好"]
+    let introductionDic = ["GuardViewController" : "为什么 guard 比 if 好",
+                           "FlatMapViewController" : "Swift 2.0: 理解 flatMap" ]
+    
+    
+    
+    var teachDic: [String : Dictionary<String, String>]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +25,8 @@ class ViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = 50
+        
+        teachDic = ["swift 入门" : introductionDic]
     }
 
     override func didReceiveMemoryWarning() {
@@ -32,10 +39,14 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDataSource, UITableViewDelegate{
     
-    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return Array(teachDic.keys).count
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemDic.count
+        let keys = Array(teachDic!.keys)
+        let itemDic = teachDic[keys[section]]
+        return Array(itemDic!.keys).count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -44,22 +55,39 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate{
             cell = UITableViewCell(style: .default, reuseIdentifier: "Cell")
             cell?.accessoryType = .disclosureIndicator
         }
-        cell?.textLabel?.text = Array(itemDic.values)[indexPath.row]
+        let keys = Array(teachDic!.keys)
+        let itemDic = teachDic[keys[indexPath.section]]
+        cell?.textLabel?.text = Array(itemDic!.values)[indexPath.row]
         return cell!
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: 320, height: 30))
+        label.backgroundColor = UIColor.gray
+        let keys = Array(teachDic!.keys)
+        label.text = keys[section]
+        return label
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 30
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let viewControllerString = parseViewControllerName(Array(itemDic.values)[indexPath.row])
+        let keys = Array(teachDic!.keys)
+        let itemDic = teachDic[keys[indexPath.section]]
+        let viewControllerString = parseSection(indexPath.section, viewControllerName: Array(itemDic!.values)[indexPath.row])
         if let classType = NSClassFromString(viewControllerString!) as? UIViewController.Type {
             let viewController = classType.init()
             navigationController?.pushViewController(viewController, animated: true)
         }
     }
     
-    func parseViewControllerName(_ title: String) -> String? {
-        for key in Array(itemDic.keys) {
-            let v = itemDic[key]
+    func parseSection(_ section: Int , viewControllerName title: String) -> String? {
+        let keys = Array(teachDic!.keys)
+        let itemDic = teachDic[keys[section]]
+        for key in Array(itemDic!.keys) {
+            let v = itemDic?[key]
             if v == title {
                 return ("Swift_Lean.\(key)")
             }
