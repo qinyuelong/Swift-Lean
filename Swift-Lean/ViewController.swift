@@ -13,7 +13,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     let introductionDic = ["GuardViewController" : "为什么 guard 比 if 好",
-                           "FlatMapViewController" : "Swift 2.0: 理解 flatMap" ]
+                           "FlatMapViewController" : "Swift 2.0: 理解 flatMap",
+                           "StructCodingViewController" : "Swift 中的结构体与 NSCoding"]
     
     
     
